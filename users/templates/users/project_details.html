@@ -1,0 +1,164 @@
+{% extends 'users/base.html' %}
+
+{% block title %} Portfolio | Project Details{% endblock title %}
+
+{% block content %}
+    <main>
+        <div class="hero-area2 d-flex align-items-center">
+            <div class="container">
+                <div class="row ">
+                    <div class="col-xl-12">
+                        <div class="hero-cap pt-50">
+                            <h2>Project Details: {{ project.name }}</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <section class="blog_area single-post-area section-padding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 posts-list">
+                        <div class="single-post">
+                            <div class="feature-img">
+                                <img class="img-fluid" src="{{ project.image.url }}">
+                            </div>
+                            <div class="blog_details">
+                                <h2 style="color: #2d2d2d;">{{ project.name }}</h2>
+                                <p class="excert">{{ project.description }}</p>
+                                <p>{{ project.features }}</p>
+                            </div>
+                        </div>
+                        <div class="navigation-top">
+                            <div class="navigation-area">
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-12 nav-left flex-row d-flex justify-content-start align-items-center">
+                                        <div class="arrow">
+                                            <a href="#">
+                                                <span class="lnr text-white ti-arrow-left"></span>
+                                            </a>
+                                        </div>
+                                        <div class="detials">
+                                            <a href="{{ project.demo_link }}" target="_blank">
+                                                <h4 style="color: #ff8553;">Demo Link</h4>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-12 nav-right flex-row d-flex justify-content-end align-items-center">
+                                        <div class="detials">
+                                            <a href="{{ project.github_link }}" target="_blank">
+                                                <h4 style="color: #ff8553;">GitHub Link</h4>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="comments-area">
+                            {% with comments.count as total_comments %}
+                                <h4>{{ total_comments }} comment{{ total_comments|pluralize }}</h4>
+                            {% endwith %}
+                            
+                            {% for comment in comments %}
+                            <div class="comment-list">
+                                <div class="single-comment justify-content-between d-flex">
+                                    <div class="user justify-content-between d-flex">
+                                        <div class="thumb">
+                                            <img src="{{ comment.user.profile.profile_picture.url }}">
+                                        </div>
+                                        <div class="desc">
+                                            <p class="comment">
+                                                {{ comment.body }}
+                                            </p>
+                                            <div class="d-flex justify-content-between">
+                                                <div class="d-flex align-items-center">
+                                                    <h5>
+                                                        <a href="#">{{ comment.name }}</a>
+                                                    </h5>
+                                                    <p class="date">{{ comment.created }}</p>
+                                                </div>
+                                                <!--
+                                                <div class="reply-btn">
+                                                    <a href="#" class="btn-reply text-uppercase">reply</a>
+                                                </div>
+                                                -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                                <p>There are no comments yet. Be the first to write a comment</p>
+                            {% endfor %}
+                        </div>
+                        <div class="comment-form">
+                            <h4>Leave a Reply</h4>
+                            <form class="form-contact comment_form" method="post">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <textarea class="form-control w-100" name="body" id="comment" cols="30"
+                                                rows="9" placeholder="Write Your Comment Here ..." required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <input class="form-control" name="name" id="name" type="text"
+                                                placeholder="Enter Your Full Name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <input class="form-control" name="email" id="email" type="email"
+                                                placeholder="Enter Your Email" required>
+                                        </div>
+                                    </div>
+                                    <!--
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <input class="form-control" name="website" id="website" type="text"
+                                                placeholder="Website">
+                                        </div>
+                                    </div>
+                                    -->
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="button button-contactForm btn_1 boxed-btn">Post
+                                        Comment</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="media contact-info">
+                            <span class="contact-info__icon"><i class="ti-home"></i></span>
+                            <div class="media-body">
+                                <h3>Oyo State, Nigeria.</h3>
+                                <p>Onibuore Area, Monatan - Iyana Church Road, Ibadan.</p>
+                            </div>
+                        </div>
+                        <div class="media contact-info">
+                            <span class="contact-info__icon"><i class="ti-tablet"></i></span>
+                            <div class="media-body">
+                                <h3>+234 8187669362</h3>
+                                <h3>+234 9032055129</h3>
+                                <p>Mon to Sat 8am to 5pm</p>
+                            </div>
+                        </div>
+                        <div class="media contact-info">
+                            <span class="contact-info__icon"><i class="ti-email"></i></span>
+                            <div class="media-body">
+                                <h3><a href="mailto:akinade.mayowa@gmail.com">akinade.mayowa@gmail.com</a></h3>
+                                <p>Send us your query anytime!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+{% endblock content %}

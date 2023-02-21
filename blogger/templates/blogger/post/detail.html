@@ -1,0 +1,260 @@
+{% extends 'users/base.html' %}
+{% load blog_tags %}
+
+{% block title %} Portfolio | Post Details Page{% endblock title %}
+
+{% block content %}
+<main>
+        <div class="hero-area2 d-flex align-items-center">
+            <div class="container">
+                <div class="row ">
+                    <div class="col-xl-12">
+
+                        <div class="hero-cap pt-50">
+                            <h2>Blog | Post Details</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <section class="blog_area single-post-area section-padding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 posts-list">
+                        <div class="single-post">
+                            <div class="feature-img">
+                                {% if post.post_image %}
+                                    <img class="img-fluid" src="{{ post.post_image.url }}" style="max-width: 70%;">
+                                {% else %}
+                                    <img class="img-fluid" src="{{ post.author.profile.profile_picture.url }}" style="max-width: 70%;">
+                                {% endif %}
+                            </div>
+                            <div class="blog_details">
+                                <h2 style="color: #2d2d2d;">
+                                    {{ post.title|title }}
+                                </h2>
+                                <ul class="blog-info-link mt-3 mb-4">
+                                    <li><a href="{% url 'users:user_profile' post.author.id %}"><i class="fa fa-user"></i>{{ post.author.first_name }} {{ post.author.last_name }}</a></li>
+                                    {% for category in post.categories.all %}
+                                        <li><a href="#"><i class="fas fa-user-tag"></i>{{ category.name }}</a></li>
+                                    {% endfor %}
+                                    <li><i class="far fa-clock"></i>{{ post.created }}</li>
+                                    {% if post.number_of_comments %}
+                                        {% with post.number_of_comments as total_comments %}
+                                            <li><a href="{{ post.get_absolute_url }}"><i class="fa fa-comments"></i>{{ total_comments }} Comment{{ total_comments|pluralize }}</a></li>
+                                        {% endwith %}
+                                    {% else %}
+                                        <li><i class="fa fa-comments"></i>0 Comment</li>
+                                    {% endif %}
+                                    <li><i class="fas fa-thumbs-up"></i>{{ post.total_likes }} Like{{ post.total_likes|pluralize }}</li>
+                                </ul>
+                                <p class="excert">{{ post.body}}</p>
+                            </div>
+                        </div>
+                        <div class="navigation-top">
+                            <div class="d-sm-flex justify-content-between text-center">
+                                <!--<p class="like-info"><span class="align-middle"><i class="fa fa-heart"></i></span> Lily and 4 people like this</p>-->
+                                <form action="{% url 'blogger:like_post' post.id post.publish.year post.publish.month post.publish.day post.slug %}" method="POST">
+                                    {% csrf_token %}
+                                    {% if user.is_authenticated %}
+                                        {% if liked %}
+                                            <button style="background-color: #ff8553; color: #fff; border-radius: 10px; cursor: pointer;" class="blog_tag" type="submit" name="post_id" value="{{ post.id }}">Unlike Post</button>-{{ post.total_likes }} Likes
+                                        {% else %}
+                                            <button style="background-color: #ff8553; color: #fff; border-radius: 10px; cursor: pointer;" class="blog_tag" type="submit" name="post_id" value="{{ post.id }}">Like Post</button>-{{ post.total_likes }} Likes
+                                        {% endif %}
+                                    {% else %}
+                                        <small>Please Login to like this post</small>
+                                    {% endif %}
+                                </form>
+                                <!--
+                                <div class="col-sm-4 text-center my-2 my-sm-0">
+                                    <button style="background-color: #ff8553; color: #fff; border-radius: 10px; cursor: pointer;" class="blog_tag"><a href="{% url 'blogger:post_create' %}">Add Post</a></button>
+                                </div>
+                                -->
+                                <div class="col-sm-4 text-center my-2 my-sm-0">
+                                    <button style="background-color: #ff8553; color: #fff; border-radius: 10px; cursor: pointer;" class="blog_tag"><a href="{% url 'blogger:post_list' %}">All Posts</a></button>
+                                </div>
+                                <ul class="social-icons">
+                                    <!--<li><a href="#" target="_blank" class="email-btn"><i class="fas fa-envelope"></i></a></li>-->
+                                    <li><a href="#" target="_blank" class="facebook-btn"><i class="fab fa-facebook-f"></i></a></li>
+                                    <li><a href="#" target="_blank" class="twitter-btn"><i class="fab fa-twitter"></i></a></li>
+                                    <li><a href="#" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i></a></li>
+                                    <li><a href="#" target="_blank" class="telegram-btn"><i class="fab fa-telegram"></i></a></li>
+                                    <li><a href="#" target="_blank" class="linkedin-btn"><i class="fab fa-linkedin"></i></a></li>
+                                </ul>
+                            </div>
+                            <div class="navigation-area">
+                                <div class="row">
+                                    {% if request.user == post.author %}
+                                    <div class="col-lg-6 col-md-6 col-12 nav-left flex-row d-flex justify-content-start align-items-center">
+                                        <div class="detials">
+                                            <a href="{% url 'blogger:post_edit' post.pk post.slug %}">
+                                                <h4 style="color: #2d2d2d;">Edit Post</h4>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="col-lg-6 col-md-6 col-12 nav-right flex-row d-flex justify-content-end align-items-center">
+                                        <div class="detials">
+                                            <a href="{% url 'blogger:post_delete' post.pk post.slug %}">
+                                                <h4 style="color: #2d2d2d;">Delete Post</h4>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <!--
+                        <div class="blog-author">
+                            <div class="media align-items-center">
+                            
+                            </div>
+                        </div>
+                        -->
+                        <div class="comments-area">
+                            {% with comments.count as total_comments %}
+                                <h4>{{ total_comments }} comment{{ total_comments|pluralize }}</h4>
+                            {% endwith %}
+                            
+                            {% for comment in comments %}
+                            <div class="comment-list">
+                                <div class="single-comment justify-content-between d-flex">
+                                    <div class="user justify-content-between d-flex">
+                                        <div class="thumb">
+                                            <img src="{{ comment.user.profile.profile_picture.url }}">
+                                        </div>
+                                        <div class="desc">
+                                            <p class="comment">
+                                                {{ comment.body }}
+                                            </p>
+                                            <div class="d-flex justify-content-between">
+                                                <div class="d-flex align-items-center">
+                                                    <h5>
+                                                        <a href="#">{{ comment.name }}</a>
+                                                    </h5>
+                                                    <p class="date">{{ comment.created }}</p>
+                                                </div>
+                                                <!--
+                                                <div class="reply-btn">
+                                                    <a href="#" class="btn-reply text-uppercase">reply</a>
+                                                </div>
+                                                -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% empty %}
+                                <p>There are no comments yet. Be the first to write a comment</p>
+                            {% endfor %}
+                        </div>
+                        <div class="comment-form">
+                            <h4>Leave a Reply</h4>
+                            <form class="form-contact comment_form" method="post">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <textarea class="form-control w-100" name="body" id="comment" cols="30"
+                                                rows="9" placeholder="Write Your Comment Here ..." required></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <input class="form-control" name="name" id="name" type="text"
+                                                placeholder="Enter Your Full Name" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <input class="form-control" name="email" id="email" type="email"
+                                                placeholder="Enter Your Email" required>
+                                        </div>
+                                    </div>
+                                    <!--
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <input class="form-control" name="website" id="website" type="text"
+                                                placeholder="Website">
+                                        </div>
+                                    </div>
+                                    -->
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="button button-contactForm btn_1 boxed-btn">Post
+                                        Comment</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="blog_right_sidebar">
+                            <aside class="single_sidebar_widget search_widget">
+                                <form method="post" action="/blogger/post_detail_search/">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control" placeholder='Search Blog Posts' name="q" required>
+                                            <div class="input-group-append">
+                                                <button class="btns" type="button"><i class="ti-search"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="button rounded-0 primary-bg text-white w-100 btn_1 boxed-btn" type="submit" name="submit">Search</button>
+                                </form>
+                            </aside>
+                            <aside class="single_sidebar_widget tag_cloud_widget">
+                                <h4 class="widget_title" style="color: #2d2d2d;">Category Clouds</h4>
+                                <ul class="list">
+                                    {% for category in categories %}
+                                    <li>
+                                        <a href="{% url 'blogger:post_category' category.name %}">{{ category }}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </aside>
+                            <aside class="single_sidebar_widget popular_post_widget">
+                                <h3 class="widget_title" style="color: #2d2d2d;">Recent Post</h3>
+                                {% show_latest_posts 3 %}
+                            </aside>
+                            <aside class="single_sidebar_widget tag_cloud_widget">
+                                <h4 class="widget_title" style="color: #2d2d2d;">Tag Clouds</h4>
+                                <ul class="list">
+                                    {% for tag in tags %}
+                                    <li>
+                                        <a href="{% url 'blogger:post_tags' tag.title %}">{{ tag }}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </aside>
+                            <aside class="single_sidebar_widget instagram_feeds">
+                                <h4 class="widget_title" style="color: #2d2d2d;"> 5 Most Commented Posts</h4>
+                                {% get_most_commented_posts as most_commented_posts %}
+                                {% for post in most_commented_posts %}
+                                    <div class="media-body">
+                                        <a href="{{ post.get_absolute_url }}">
+                                            <h3 style="color: #2d2d2d;">{{ post.title | slice:":100"}}... | {{ post.number_of_comments }} comment{{ post.number_of_comments|pluralize }}</h3>
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                                
+                                <!--
+                                <ul class="list">
+                                    {% for post in most_commented_posts %}
+                                    <li>
+                                        <a href="{{ post.get_absolute_url }}">{{ post.title|title }}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                                -->
+                            </aside>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+{% endblock content %}

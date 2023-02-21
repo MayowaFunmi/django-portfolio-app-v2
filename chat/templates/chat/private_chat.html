@@ -1,0 +1,40 @@
+{% extends 'users/base.html' %}
+{% load static %}
+
+{% block title %} Portfolio | Private Chat{% endblock title %}
+
+{% block content %}
+    <main>
+        <div class="hero-area2 d-flex align-items-center">
+            <div class="container">
+                <div class="row ">
+                    <div class="col-xl-12">
+                        <div class="hero-cap pt-50">
+                            <h2>Private Chat Page</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="body">
+            <section class="msger">
+                <main class="msger-chat">
+                
+                </main>
+                
+                <form class="msger-inputarea" id="private_form">
+                    {% csrf_token %}
+                    <input type="hidden" name="sender" id="sender" value="{{ sender }}" readonly><br>
+                    <input type="hidden" name="receiver" id="receiver" value="{{ receiver }}" readonly><br>
+                    <input type="hidden" name="active_user" value="{{ request.user.username }}" readonly>
+                    <input type="text" class="msger-input" name="message" id="message" placeholder="Enter Your Message Here ..." required>
+                    <button type="submit" class="msger-send-btn">Send Chat</button>
+                </form>
+            </section>
+        </div>
+    </main>
+{% endblock content %}
+{% block js %}
+    <script src="{% static 'js/private_chat.js' %}"></script>
+{% endblock js %}
