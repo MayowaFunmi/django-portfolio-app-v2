@@ -1647,6 +1647,7 @@ def signup_view(request):
         if password != password1:
             messages.error(request, "Your Passwords Don't match")
             return render(request, 'users/signup.html')
+
         User.objects.create_user(email=email, first_name=first_name, last_name=last_name, username=username, password=password)
         context = {
             'email': email, 'first_name': first_name, 'last_name': last_name, 'username': username
